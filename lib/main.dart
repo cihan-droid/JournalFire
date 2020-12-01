@@ -99,87 +99,6 @@ class _HomeState extends State<Home> {
     );
   }
 
-  Widget _buildListViewSeparated(AsyncSnapshot snapshot) {
-    return ListView.separated(
-      itemCount: snapshot.data.length,
-      itemBuilder: (BuildContext context, int index) {
-        String _titleDate =
-            _tarihFormat.tarihFormatlaKisaGunAdi(snapshot.data[index].date);
-        String _subtitle =
-            snapshot.data[index].mood + "\n" + snapshot.data[index].note;
-        return Dismissible(
-          key: Key(snapshot.data[index].documentID),
-          background: Container(
-            color: Colors.red,
-            alignment: Alignment.centerLeft,
-            padding: EdgeInsets.only(left: 16.0),
-            child: Icon(
-              Icons.delete,
-              color: Colors.white,
-            ),
-          ),
-          secondaryBackground: Container(
-            color: Colors.red,
-            alignment: Alignment.centerRight,
-            padding: EdgeInsets.only(right: 16.0),
-            child: Icon(
-              Icons.delete,
-              color: Colors.white,
-            ),
-          ),
-          child: ListTile(
-            leading: Column(
-              children: <Widget>[
-                Text(
-                  _tarihFormat
-                      .tarihFormatlaGunNumarasi(snapshot.data[index].date),
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 32.0,
-                      color: Colors.lightGreen),
-                ),
-                Text(_tarihFormat
-                    .tarihFormatlaKisaGunAdi(snapshot.data[index].date)),
-              ],
-            ),
-            trailing: Transform(
-              transform: Matrix4.identity()
-                ..rotateZ(_modIkon.getMoodRotation(snapshot.data[index].mood)),
-              alignment: Alignment.center,
-              child: Icon(
-                _modIkon.getMoodIcon(snapshot.data[index].mood),
-                color: _modIkon.getMoodColor(snapshot.data[index].mood),
-                size: 42.0,
-              ),
-            ),
-            title: Text(
-              _titleDate,
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            subtitle: Text(_subtitle),
-            onTap: () {
-              _addOrEditJournal(
-                add: false,
-                journal: snapshot.data[index],
-              );
-            },
-          ),
-          confirmDismiss: (direction) async {
-            bool confirmDelete = await _confirmDeleteJournal();
-            if (confirmDelete) {
-              _homeBloc.gunlukSil.add(snapshot.data[index]);
-            }
-          },
-        );
-      },
-      separatorBuilder: (BuildContext context, int index) {
-        return Divider(
-          color: Colors.grey,
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -218,7 +137,7 @@ class _HomeState extends State<Home> {
               child: CircularProgressIndicator(),
             );
           } else if (snapshot.hasData) {
-            return _buildListViewSeparated(snapshot);
+            Text("veriler geldi");
           } else {
             return Center(
               child: Container(
