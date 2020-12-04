@@ -8,8 +8,7 @@ class AuthenticationBlocProvider extends InheritedWidget {
       : super(key: key, child: child);
 
   static AuthenticationBlocProvider of(BuildContext context) {
-    return (context.dependOnInheritedWidgetOfExactType()
-        as AuthenticationBlocProvider);
+    return context.dependOnInheritedWidgetOfExactType();
   }
 
   @override

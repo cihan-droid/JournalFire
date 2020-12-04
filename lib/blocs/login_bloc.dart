@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'package:flutter/material.dart';
+
 import '../classes/validators.dart';
 import '../servis/authentication_api.dart';
 
@@ -39,7 +41,7 @@ class LoginBloc with Validators {
   Stream<String> get loginOrCreate => _loginOrCreateController.stream;
 
   LoginBloc({this.authenticationApi}) {
-    _mailveSifreDogruysaDinleyicileriBaslat();
+    _mailveSifreDinleyicileriBaslat();
   }
 
   void dispose() {
@@ -50,7 +52,8 @@ class LoginBloc with Validators {
     _loginOrCreateController.close();
   }
 
-  void _mailveSifreDogruysaDinleyicileriBaslat() {
+  //bu metot loginbloc oluştuğu gibi dinleyicileri başlatır ve her email ve şifre değiştiğinde login create buton durumunu değiştirir.
+  void _mailveSifreDinleyicileriBaslat() {
     email.listen((email) {
       _email = email;
       _emailValid = true;
@@ -111,7 +114,9 @@ class LoginBloc with Validators {
             .mailAdresiveSifreyleGirisYap(email: _email, sifre: _sifre)
             .then((user) {})
             .catchError((hata) async {
-          print('Login error: $hata');
+          AlertDialog(
+            content: hata,
+          );
           _sonuc = hata;
         });
       }).catchError((hata) async {

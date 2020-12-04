@@ -1,22 +1,53 @@
 import 'package:JournalFire/blocs/authentication.dart';
 import 'package:JournalFire/blocs/authentication_bloc.dart';
-import 'package:JournalFire/blocs/gunluk_edit_bloc.dart';
-import 'package:JournalFire/blocs/gunluk_edit_bloc_provider.dart';
 import 'package:JournalFire/blocs/home_bloc.dart';
 import 'package:JournalFire/blocs/home_bloc_provider.dart';
-import 'package:JournalFire/classes/mod_ikonlari.dart';
-import 'package:JournalFire/classes/tarihFormatla.dart';
+import 'package:JournalFire/sayfalar/home.dart';
+import 'package:JournalFire/sayfalar/login.dart';
+import 'package:JournalFire/servis/authentication.dart';
 import 'package:JournalFire/servis/db_firestore.dart';
 import 'package:flutter/material.dart';
-
-import 'model/gunluk.dart';
 
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-// This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    final AuthenticationService _authenticationService =
+        AuthenticationService();
+    final AuthenticationBloc _authenticationBloc =
+        AuthenticationBloc(authenticationApi: _authenticationService);
+    return AuthenticationBlocProvider(
+      authenticationBloc: _authenticationBloc,
+      child: StreamBuilder(
+        //programın başlangıcında ilk değer olarak null veriyoruz hiç bir kullanıcı daha bağlanmadı anlamında
+        initialData: null,
+        //authentication bloc sınıfında yazdığımız akış sağlayıcının adı kullanıcı idi. bu bize herhangi bir kullanıcının girip girmediğinin bilgisini sağlayacak
+        stream: _authenticationBloc.kullanici,
+        //builder özelliği stream içerisine bakarak veri olup olmadığına göre ekranı yeniden çizer. eğer kullanıcı bilgisi akıştan geliyorsa home sayfasını gösterirken kullanıcı bilgisi yoksa login sayfasını gösterir.
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Container(
+              color: Colors.lightGreen,
+              child: CircularProgressIndicator(),
+            );
+          } else if (snapshot.hasData) {
+            return HomeBlocProvider(
+              homeBloc: HomeBloc(
+                  authenticationApi: _authenticationService,
+                  dbApi: DbFirestoreService()),
+              uid: snapshot.data,
+              child: _materialAppOlustur(Home()),
+            );
+          } else {
+            return _materialAppOlustur(Login());
+          }
+        },
+      ),
+    );
+  }
+
+  MaterialApp _materialAppOlustur(Widget homePage) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Gunluk',
@@ -25,150 +56,7 @@ class MyApp extends StatelessWidget {
         canvasColor: Colors.lightGreen.shade50,
         bottomAppBarColor: Colors.lightGreen,
       ),
-      home: Home(),
-    );
-  }
-}
-
-class Home extends StatefulWidget {
-  @override
-  _HomeState createState() => _HomeState();
-}
-
-class _HomeState extends State<Home> {
-  AuthenticationBloc _authenticationBloc;
-  HomeBloc _homeBloc;
-  String _uid;
-  MoodIcons _modIkon = MoodIcons();
-  TarihFormat _tarihFormat;
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _authenticationBloc =
-        AuthenticationBlocProvider.of(context).authenticationBloc;
-    _homeBloc = HomeBlocProvider.of(context).homeBloc;
-    _uid = HomeBlocProvider.of(context).uid;
-  }
-
-  @override
-  void dispose() {
-    _homeBloc.dispose();
-    super.dispose();
-  }
-
-  void _addOrEditJournal({bool add, Gunluk journal}) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (BuildContext context) => GunlukEditBlocProvider(
-                gunlukEditBloc:
-                    GunlukEditBloc(add, journal, DbFirestoreService()),
-                //3child: EditEntry(),
-              ),
-          fullscreenDialog: true),
-    );
-  }
-
-  Future<bool> _confirmDeleteJournal() async {
-    return await showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text("Delete Journal"),
-          content: Text("Are you sure you would like to Delete?"),
-          actions: <Widget>[
-            FlatButton(
-              child: Text('CANCEL'),
-              onPressed: () {
-                Navigator.pop(context, false);
-              },
-            ),
-            FlatButton(
-              child: Text(
-                'DELETE',
-                style: TextStyle(color: Colors.red),
-              ),
-              onPressed: () {
-                Navigator.pop(context, true);
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title:
-            Text('Gunluk', style: TextStyle(color: Colors.lightGreen.shade800)),
-        elevation: 0.0,
-        bottom: PreferredSize(
-            child: Container(), preferredSize: Size.fromHeight(32.0)),
-        flexibleSpace: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Colors.lightGreen, Colors.lightGreen.shade50],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-            ),
-          ),
-        ),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(
-              Icons.exit_to_app,
-              color: Colors.lightGreen.shade800,
-            ),
-            onPressed: () {
-              _authenticationBloc.logoutKullanici.add(true);
-            },
-          ),
-        ],
-      ),
-      body: StreamBuilder(
-        stream: _homeBloc.listGunluk,
-        builder: ((BuildContext context, AsyncSnapshot snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          } else if (snapshot.hasData) {
-            Text("veriler geldi");
-          } else {
-            return Center(
-              child: Container(
-                child: Text('Günlük Ekle'),
-              ),
-            );
-          }
-        }),
-      ),
-      bottomNavigationBar: BottomAppBar(
-        elevation: 0.0,
-        child: Container(
-          height: 44.0,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Colors.lightGreen.shade50, Colors.lightGreen],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-            ),
-          ),
-        ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: FloatingActionButton(
-        tooltip: 'Günlük Girişi Ekle',
-        backgroundColor: Colors.lightGreen.shade300,
-        child: Icon(Icons.add),
-        onPressed: () async {
-          _addOrEditJournal(add: true, journal: Gunluk(uid: _uid));
-        },
-      ),
+      home: homePage,
     );
   }
 }

@@ -5,10 +5,10 @@ class HomeBlocProvider extends InheritedWidget {
   final HomeBloc homeBloc;
   final String uid;
   const HomeBlocProvider({Key key, Widget child, this.homeBloc, this.uid})
-      : super(key: key, child: child);
+      : super(child: child, key: key);
 
   static HomeBlocProvider of(BuildContext context) {
-    return (context.dependOnInheritedWidgetOfExactType() as HomeBlocProvider);
+    return context.dependOnInheritedWidgetOfExactType();
   }
 
   @override

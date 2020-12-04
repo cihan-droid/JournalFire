@@ -32,6 +32,7 @@ class AuthenticationService implements AuthenticationApi {
   @override
   Future<bool> emailDogrulanmisMi() async {
     FirebaseUser kullanici = await _firebaseAuth.currentUser();
+
     return kullanici.isEmailVerified;
   }
 

@@ -8,6 +8,35 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:393990130092:android:c3e5101e7398828c565209",
+        "android_client_info": {
+          "package_name": "com.domainname.journal"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "393990130092-6n9oh9gd155f9edm5mij4agjqq4vlv25.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC5-wCwa3a8TOcIfWqjgf7n9v_GrOyubc8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "393990130092-6n9oh9gd155f9edm5mij4agjqq4vlv25.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:393990130092:android:54270670b996f346565209",
         "android_client_info": {
           "package_name": "com.example.JournalFire"

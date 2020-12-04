@@ -5,6 +5,7 @@ import 'db_firestore_api.dart';
 class DbFirestoreService implements DbApi {
   Firestore _firestore = Firestore.instance;
   String _gunlukKoleksiyonu = 'gunlukler';
+
   DbFirestoreService() {
     _firestore.settings(timestampsInSnapshotsEnabled: true);
   }
@@ -61,12 +62,28 @@ class DbFirestoreService implements DbApi {
 
   @override
   void transactionIleGunlukGuncelle(Gunluk gunluk) {
-    // TODO: bu metot transaction gördükten sonra yazılacak
+    DocumentReference _documentReference =
+        _firestore.collection(_gunlukKoleksiyonu).document(gunluk.documentId);
+    var gunlukData = {
+      'tarih': gunluk.tarih,
+      'mod': gunluk.mod,
+      'not': gunluk.not,
+    };
+    _firestore.runTransaction((transaction) async {
+      await transaction
+          .update(_documentReference, gunlukData)
+          .catchError((error) => print('Error updating: $error'));
+    });
   }
 
   @override
   Future<Gunluk> getGunluk(String documentId) {
-    // TODO: bu metot get metodu gördükten sonra yazılacak
-    throw UnimplementedError();
+    return _firestore
+        .collection(_gunlukKoleksiyonu)
+        .document(documentId)
+        .get()
+        .then((documentSnapshot) {
+      return Gunluk.fromDoc(documentSnapshot);
+    });
   }
 }

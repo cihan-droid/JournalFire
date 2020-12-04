@@ -9,15 +9,15 @@ class HomeBloc {
 
   final StreamController<List<Gunluk>> _gunlukController =
       StreamController<List<Gunluk>>.broadcast();
-  Sink<List<Gunluk>> get _addListGunluk => _gunlukController.sink;
-  Stream<List<Gunluk>> get listGunluk => _gunlukController.stream;
+  Sink<List<Gunluk>> get _gunlukListesiEkle => _gunlukController.sink;
+  Stream<List<Gunluk>> get gunlukListesi => _gunlukController.stream;
 
   final StreamController<Gunluk> _gunlukSilmeController =
       StreamController<Gunluk>.broadcast();
   Sink<Gunluk> get gunlukSil => _gunlukSilmeController.sink;
 
-  HomeBloc(this.dbApi, this.authenticationApi) {
-    _dinleyicileriBaslat();
+  HomeBloc({this.dbApi, this.authenticationApi}) {
+    _dinleyecileriBaslat();
   }
 
   void dispose() {
@@ -25,14 +25,13 @@ class HomeBloc {
     _gunlukSilmeController.close();
   }
 
-/*homebloc sınıfı kurucusunda dinleyicileri başlatıyor ve bu metot geçerli kullanıcının
-id sini alıyor ve bu ile dbapi soyut sınıfının gunlukleri getirme metodunu çağırıyor ve 
-*/
-  void _dinleyicileriBaslat() {
-    authenticationApi.getFirebaseAuth().currentUser().then((kullanici) {
-      dbApi.getGunlukListesi(kullanici.uid).listen((gunlukDocs) {
-        _addListGunluk.add(gunlukDocs);
+  void _dinleyecileriBaslat() {
+    //firestoredan günlük kayıtlarını getirecek ama firestore da tutulduğu gibi document olarak değil List<Gunluk> olarak getirecek
+    authenticationApi.getFirebaseAuth().currentUser().then((user) {
+      dbApi.getGunlukListesi(user.uid).listen((gunlukDocs) {
+        _gunlukListesiEkle.add(gunlukDocs);
       });
+
       _gunlukSilmeController.stream.listen((gunluk) {
         dbApi.gunlukSil(gunluk);
       });
