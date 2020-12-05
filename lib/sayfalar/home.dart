@@ -1,15 +1,14 @@
-import 'package:JournalFire/blocs/authentication.dart';
-import 'package:JournalFire/blocs/authentication_bloc.dart';
+import 'package:JournalFire/blocs/yetki_bloc.dart';
+import 'package:JournalFire/blocs/yetki_bloc_saglayici.dart';
 import 'package:JournalFire/blocs/gunluk_edit_bloc.dart';
-import 'package:JournalFire/blocs/gunluk_edit_bloc_provider.dart';
+import 'package:JournalFire/blocs/gunluk_edit_bloc_saglayici.dart';
 import 'package:JournalFire/blocs/home_bloc.dart';
-import 'package:JournalFire/blocs/home_bloc_provider.dart';
+import 'package:JournalFire/blocs/home_bloc_saglayici.dart';
 import 'package:JournalFire/classes/mod_ikonlari.dart';
 import 'package:JournalFire/classes/tarihFormatla.dart';
 import 'package:JournalFire/model/gunluk.dart';
 import 'package:JournalFire/servis/db_firestore.dart';
 import 'package:flutter/material.dart';
-
 import 'giris_duzenle.dart';
 
 class Home extends StatefulWidget {
@@ -18,19 +17,19 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  AuthenticationBloc _authenticationBloc;
+  YetkiBloc _authenticationBloc;
   HomeBloc _homeBloc;
   String _uid;
   ModIkonlari _modIkon = ModIkonlari();
-  TarihFormat _tarihFormat;
+  TarihFormat _tarihFormat = TarihFormat();
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    //inherited widgetlara initstate metoduyla değil didchangedependicies metodu üzerinden erişilir.
-    _authenticationBloc =
-        AuthenticationBlocProvider.of(context).authenticationBloc;
-    _homeBloc = HomeBlocProvider.of(context).homeBloc;
+    //inherited widgetlara initstate metoduyla değil didchangedepencies metodu üzerinden erişilir.
+    _authenticationBloc = YetkiBlocSaglayici.of(context).yetkiBloc;
+    _homeBloc = HomeBlocSaglayici.of(context).homeBloc;
+    _uid = HomeBlocSaglayici.of(context).uid;
   }
 
   @override
@@ -44,9 +43,9 @@ class _HomeState extends State<Home> {
         context,
         //metot baska bir sayfaya yönlendirme yaparak tam ekran bu sayfanın çizilmesini sağlayacak ve bu sayfanın başında bir inherited widget olacak ve kurucusunda yine bir bloc yapısı olacak
         MaterialPageRoute(
-            builder: (context) => GunlukEditBlocProvider(
+            builder: (context) => GunlukEditBlocSaglayici(
                   gunlukEditBloc:
-                      GunlukEditBloc(ekle, gunluk, DbFirestoreService()),
+                      GunlukEditBloc(ekle, gunluk, DbFirestoreServis()),
                   child: GirisDuzenle(),
                 ),
             fullscreenDialog: true));
@@ -79,16 +78,16 @@ class _HomeState extends State<Home> {
   Widget _listViewGoster(AsyncSnapshot snapshot) {
     //bu metot içerisine snapshot alacak ve içindeki bilgileri listview deki olması gerekn yerlere formatlayarak gösterecek
     return ListView.separated(
-      itemCount: snapshot.data.lenght,
+      itemCount: snapshot.data.length,
       itemBuilder: (context, index) {
         //tarih format sınıfı yardımıyla gelen string tarihi istediğimiz şekliyle gösterebilme yeteneğine sahibiz
         String _baslikTarihi =
-            _tarihFormat.tarihFormatlaKisaGunAdi(snapshot.data[index].tarih);
+            _tarihFormat.tarihFormatlaYilAyGun(snapshot.data[index].tarih);
         String _altYazilar =
             snapshot.data[index].mod + "\n" + snapshot.data[index].not;
         //dismissible widgetı sağa ya da sola kaydırmalı bir widgettır.
         return Dismissible(
-          key: snapshot.data[index].documentID,
+          key: Key(snapshot.data[index].documentID),
           //sağa kaydırdığında göreceğin kısmı yazdık bu bi cpntainer ve içinde de ikon var
           background: Container(
             color: Colors.red,
@@ -152,7 +151,7 @@ class _HomeState extends State<Home> {
           confirmDismiss: (direction) async {
             bool silmeyiOnayla = await _gunlukSilmeOnayla();
             if (silmeyiOnayla) {
-              _homeBloc.gunlukSil.add(snapshot.data[index]);
+              _homeBloc.gunlukSilmeSinki.add(snapshot.data[index]);
             }
           },
         );
@@ -189,14 +188,14 @@ class _HomeState extends State<Home> {
             ),
             onPressed: () {
               //authentication bloc nesnesini yaratırken iki farklı stream kontoller yaratmıştık bunlardan biri authentication kontroller diğeri de logout controller idi şu an butona basıldığında logoutcontroller ın sink tarafı havuza bir true göndererek bütün dinleyiciler tarafından kullanıcın çıkış yaptığı bilinecek
-              _authenticationBloc.logoutKullanici.add(true);
+              _authenticationBloc.kullaniciCikisSinki.add(true);
             },
           ),
         ],
       ),
       body: StreamBuilder(
         //ana sayfamızın esas veri kaynağı user id ye göre filtrelenmiş günlüklerdir. bundan dolayı veri varsa başka yoksa başka veya veriler geliyorsa başka şekilde ekran çizilecek.
-        stream: _homeBloc.gunlukListesi,
+        stream: _homeBloc.gunlukListesiAkisi,
         builder: (context, snapshot) {
           //eğer bağlantı durumu bekliyorsa dönen animasyon göster
           if (snapshot.connectionState == ConnectionState.waiting) {

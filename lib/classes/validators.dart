@@ -1,7 +1,7 @@
 import 'dart:async';
 
-class Validators {
-  final validateEmail =
+class Dogrulayicilar {
+  final ePostaDogrula =
       StreamTransformer<String, String>.fromHandlers(handleData: (email, sink) {
     if (email.contains('@') && email.contains('.')) {
       sink.add(email);
@@ -9,7 +9,7 @@ class Validators {
       sink.addError('Doğru bir mail adresi giriniz');
     }
   });
-  final validateSifre =
+  final sifreDogrula =
       StreamTransformer<String, String>.fromHandlers(handleData: (sifre, sink) {
     if (sifre.length >= 6) {
       sink.add(sifre);

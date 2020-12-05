@@ -5,34 +5,35 @@ import '../model/gunluk.dart';
 
 class HomeBloc {
   final DbApi dbApi;
-  final AuthenticationApi authenticationApi;
+  final YetkiApi yetkiApi;
 
-  final StreamController<List<Gunluk>> _gunlukController =
+  final StreamController<List<Gunluk>> _gunlukListesiKontrolor =
       StreamController<List<Gunluk>>.broadcast();
-  Sink<List<Gunluk>> get _gunlukListesiEkle => _gunlukController.sink;
-  Stream<List<Gunluk>> get gunlukListesi => _gunlukController.stream;
+  Sink<List<Gunluk>> get _gunlukListesiEkleSinki =>
+      _gunlukListesiKontrolor.sink;
+  Stream<List<Gunluk>> get gunlukListesiAkisi => _gunlukListesiKontrolor.stream;
 
-  final StreamController<Gunluk> _gunlukSilmeController =
+  final StreamController<Gunluk> _gunlukSilmeKontrolor =
       StreamController<Gunluk>.broadcast();
-  Sink<Gunluk> get gunlukSil => _gunlukSilmeController.sink;
+  Sink<Gunluk> get gunlukSilmeSinki => _gunlukSilmeKontrolor.sink;
 
-  HomeBloc({this.dbApi, this.authenticationApi}) {
+  HomeBloc({this.dbApi, this.yetkiApi}) {
     _dinleyecileriBaslat();
   }
 
   void dispose() {
-    _gunlukController.close();
-    _gunlukSilmeController.close();
+    _gunlukListesiKontrolor.close();
+    _gunlukSilmeKontrolor.close();
   }
 
   void _dinleyecileriBaslat() {
     //firestoredan günlük kayıtlarını getirecek ama firestore da tutulduğu gibi document olarak değil List<Gunluk> olarak getirecek
-    authenticationApi.getFirebaseAuth().currentUser().then((user) {
-      dbApi.getGunlukListesi(user.uid).listen((gunlukDocs) {
-        _gunlukListesiEkle.add(gunlukDocs);
+    yetkiApi.getFirebaseAuth().currentUser().then((kullanici) {
+      dbApi.getGunlukListesi(kullanici.uid).listen((gunlukDocs) {
+        _gunlukListesiEkleSinki.add(gunlukDocs);
       });
 
-      _gunlukSilmeController.stream.listen((gunluk) {
+      _gunlukSilmeKontrolor.stream.listen((gunluk) {
         dbApi.gunlukSil(gunluk);
       });
     });

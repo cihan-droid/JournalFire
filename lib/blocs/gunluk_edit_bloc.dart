@@ -7,25 +7,25 @@ class GunlukEditBloc {
   final bool ekle;
   Gunluk seciliGunluk;
 
-  final StreamController<String> _tarihController =
+  final StreamController<String> _tarihKontrolor =
       StreamController<String>.broadcast();
-  Sink<String> get tarihEditChanged => _tarihController.sink;
-  Stream<String> get tarihEdit => _tarihController.stream;
+  Sink<String> get tarihDuzenlemeDegistiSinki => _tarihKontrolor.sink;
+  Stream<String> get tarihDuzenlemeAkisi => _tarihKontrolor.stream;
 
-  final StreamController<String> _modController =
+  final StreamController<String> _modKontrolor =
       StreamController<String>.broadcast();
-  Sink<String> get modEditChanged => _modController.sink;
-  Stream<String> get modEdit => _modController.stream;
+  Sink<String> get modDuzenlemeDegistiSinki => _modKontrolor.sink;
+  Stream<String> get modDuzenlemeAkisi => _modKontrolor.stream;
 
   final StreamController<String> _notController =
       StreamController<String>.broadcast();
-  Sink<String> get notEditChanged => _notController.sink;
-  Stream<String> get notEdit => _notController.stream;
+  Sink<String> get notDuzenlemeDegistiSinki => _notController.sink;
+  Stream<String> get notDuzenlemeAkisi => _notController.stream;
 
   final StreamController<String> _gunlukKaydetmeController =
       StreamController<String>.broadcast();
-  Sink<String> get gunlukKaydetChanged => _gunlukKaydetmeController.sink;
-  Stream<String> get gunlukKaydet => _gunlukKaydetmeController.stream;
+  Sink<String> get gunlukKaydetDegistiSinki => _gunlukKaydetmeController.sink;
+  Stream<String> get gunlukKaydetAkisi => _gunlukKaydetmeController.stream;
 
   GunlukEditBloc(this.ekle, this.seciliGunluk, this.dbApi) {
     _duzenlemeDinleyecileriniBaslat()
@@ -33,17 +33,17 @@ class GunlukEditBloc {
   }
 
   void dispose() {
-    _tarihController.close();
+    _tarihKontrolor.close();
     _notController.close();
-    _modController.close();
+    _modKontrolor.close();
     _gunlukKaydetmeController.close();
   }
 
   Future<bool> _duzenlemeDinleyecileriniBaslat() async {
-    _tarihController.stream.listen((tarih) {
+    _tarihKontrolor.stream.listen((tarih) {
       seciliGunluk.tarih = tarih;
     });
-    _modController.stream.listen((mod) {
+    _modKontrolor.stream.listen((mod) {
       seciliGunluk.mod = mod;
     });
     _notController.stream.listen((not) {
@@ -70,15 +70,15 @@ class GunlukEditBloc {
       seciliGunluk.mod = gunluk.mod;
       seciliGunluk.not = gunluk.not;
     }
-    tarihEditChanged.add(seciliGunluk.tarih);
-    modEditChanged.add(seciliGunluk.mod);
-    notEditChanged.add(seciliGunluk.not);
+    tarihDuzenlemeDegistiSinki.add(seciliGunluk.tarih);
+    modDuzenlemeDegistiSinki.add(seciliGunluk.mod);
+    notDuzenlemeDegistiSinki.add(seciliGunluk.not);
   }
 
   //gunluk kaydet metodu çağrıldığında yeni bir gunluk nesnesi yaratılır ve bu nesne secili gunluk nasıl şekillendiyse ona göre oluşur.sadece tarih formatlanır ve api tarafına bu günlük
   void _gunlukKaydet() {
     Gunluk gunluk = Gunluk(
-      documentId: seciliGunluk.documentId,
+      documentID: seciliGunluk.documentID,
       tarih: DateTime.parse(seciliGunluk.tarih).toIso8601String(),
       mod: seciliGunluk.mod,
       not: seciliGunluk.not,

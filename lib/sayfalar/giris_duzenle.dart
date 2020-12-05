@@ -1,5 +1,5 @@
 import 'package:JournalFire/blocs/gunluk_edit_bloc.dart';
-import 'package:JournalFire/blocs/gunluk_edit_bloc_provider.dart';
+import 'package:JournalFire/blocs/gunluk_edit_bloc_saglayici.dart';
 import 'package:JournalFire/classes/mod_ikonlari.dart';
 import 'package:JournalFire/classes/tarihFormatla.dart';
 import 'package:flutter/material.dart';
@@ -27,7 +27,7 @@ class _GirisDuzenleState extends State<GirisDuzenle> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _gunlukEditBloc = GunlukEditBlocProvider.of(context).gunlukEditBloc;
+    _gunlukEditBloc = GunlukEditBlocSaglayici.of(context).gunlukEditBloc;
   }
 
   @override
@@ -63,7 +63,7 @@ class _GirisDuzenleState extends State<GirisDuzenle> {
 
   void _gunluguEkleYadaGuncelle() {
     //gunlukkaydet stream de akışı dinlerken eğer kaydet görürse apiye kaydetme çağrısı yapıyordu.
-    _gunlukEditBloc.gunlukKaydetChanged.add('Kaydet');
+    _gunlukEditBloc.gunlukKaydetDegistiSinki.add('Kaydet');
   }
 
   @override
@@ -94,7 +94,7 @@ class _GirisDuzenleState extends State<GirisDuzenle> {
             children: [
               //sayfanın üstündeki tarih bölümü için streambuilder olacak
               StreamBuilder(
-                stream: _gunlukEditBloc.tarihEdit,
+                stream: _gunlukEditBloc.tarihDuzenlemeAkisi,
                 //eğer tarih bilgisi yoksa sadece boş container olacak ama tarih varsa flatbutton içinde tarih yazdırıp tıklama olayı ile de tarihseçme widgetı açılacak
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
@@ -125,13 +125,14 @@ class _GirisDuzenleState extends State<GirisDuzenle> {
                     onPressed: () async {
                       FocusScope.of(context).requestFocus(FocusNode());
                       String _seciliTarih = await _tarihSec(snapshot.data);
-                      _gunlukEditBloc.tarihEditChanged.add(_seciliTarih);
+                      _gunlukEditBloc.tarihDuzenlemeDegistiSinki
+                          .add(_seciliTarih);
                     },
                   );
                 },
               ),
               StreamBuilder(
-                stream: _gunlukEditBloc.modEdit,
+                stream: _gunlukEditBloc.modDuzenlemeAkisi,
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
                     return Container();
@@ -142,7 +143,8 @@ class _GirisDuzenleState extends State<GirisDuzenle> {
                           .getModIkonList()
                           .indexWhere((ikon) => ikon.baslik == snapshot.data)],
                       onChanged: (secili) {
-                        _gunlukEditBloc.modEditChanged.add(secili.baslik);
+                        _gunlukEditBloc.modDuzenlemeDegistiSinki
+                            .add(secili.baslik);
                       },
                       items: _modIkonlari
                           .getModIkonList()
@@ -175,7 +177,7 @@ class _GirisDuzenleState extends State<GirisDuzenle> {
                 },
               ),
               StreamBuilder(
-                stream: _gunlukEditBloc.notEdit,
+                stream: _gunlukEditBloc.notDuzenlemeAkisi,
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
                     Container();
@@ -189,7 +191,8 @@ class _GirisDuzenleState extends State<GirisDuzenle> {
                     decoration: InputDecoration(
                         labelText: 'Not', icon: Icon(Icons.subject)),
                     maxLines: null,
-                    onChanged: (not) => _gunlukEditBloc.notEditChanged.add(not),
+                    onChanged: (not) =>
+                        _gunlukEditBloc.notDuzenlemeDegistiSinki.add(not),
                   );
                 },
               ),
@@ -209,6 +212,7 @@ class _GirisDuzenleState extends State<GirisDuzenle> {
                     color: Colors.lightGreen.shade100,
                     onPressed: () {
                       _gunluguEkleYadaGuncelle();
+                      Navigator.pop(context);
                     },
                   )
                 ],

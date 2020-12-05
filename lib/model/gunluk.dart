@@ -1,14 +1,14 @@
 class Gunluk {
-  String documentId;
+  String documentID;
   String tarih;
   String mod;
   String not;
   String uid;
 
-  Gunluk({this.documentId, this.mod, this.not, this.tarih, this.uid});
+  Gunluk({this.documentID, this.mod, this.not, this.tarih, this.uid});
 
   factory Gunluk.fromDoc(dynamic doc) => Gunluk(
-      documentId: doc.documentID,
+      documentID: doc.documentID,
       tarih: doc["tarih"],
       mod: doc["mod"],
       not: doc["not"],

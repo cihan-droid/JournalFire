@@ -2,12 +2,12 @@ import '../model/gunluk.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'db_firestore_api.dart';
 
-class DbFirestoreService implements DbApi {
+class DbFirestoreServis implements DbApi {
   Firestore _firestore = Firestore.instance;
   String _gunlukKoleksiyonu = 'gunlukler';
 
-  DbFirestoreService() {
-    _firestore.settings(timestampsInSnapshotsEnabled: true);
+  DbFirestoreServis() {
+    // _firestore.settings(timestampsInSnapshotsEnabled: true);
   }
 
   //kullanıcya ait bütün günlük listesini alabilmek için kullandığımız metot
@@ -33,7 +33,7 @@ class DbFirestoreService implements DbApi {
         .add({
       'tarih': gunluk.tarih,
       'mod': gunluk.mod,
-      'not': gunluk.mod,
+      'not': gunluk.not,
       'uid': gunluk.uid
     });
     return _documentReference.documentID != null;
@@ -43,7 +43,7 @@ class DbFirestoreService implements DbApi {
   void gunlukGuncelle(Gunluk gunluk) async {
     await _firestore
         .collection(_gunlukKoleksiyonu)
-        .document(gunluk.documentId)
+        .document(gunluk.documentID)
         .updateData({
       'tarih': gunluk.tarih,
       'mod': gunluk.mod,
@@ -55,7 +55,7 @@ class DbFirestoreService implements DbApi {
   void gunlukSil(Gunluk gunluk) async {
     await _firestore
         .collection(_gunlukKoleksiyonu)
-        .document(gunluk.documentId)
+        .document(gunluk.documentID)
         .delete()
         .catchError((hata) => print('Silme sırasında bir hata oluştu: $hata'));
   }
@@ -63,7 +63,7 @@ class DbFirestoreService implements DbApi {
   @override
   void transactionIleGunlukGuncelle(Gunluk gunluk) {
     DocumentReference _documentReference =
-        _firestore.collection(_gunlukKoleksiyonu).document(gunluk.documentId);
+        _firestore.collection(_gunlukKoleksiyonu).document(gunluk.documentID);
     var gunlukData = {
       'tarih': gunluk.tarih,
       'mod': gunluk.mod,

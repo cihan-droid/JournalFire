@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'authentication_api.dart';
 
-class AuthenticationService implements AuthenticationApi {
+class AuthenticationService implements YetkiApi {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   //
   FirebaseAuth getFirebaseAuth() {
@@ -39,18 +39,18 @@ class AuthenticationService implements AuthenticationApi {
   //daha önce kayıt olmuş kullanıcının email ve şifreyle giriş yapması için kulllanılacak metot
   @override
   Future<String> mailAdresiveSifreyleGirisYap(
-      {String email, String sifre}) async {
+      {String ePosta, String sifre}) async {
     FirebaseUser kullanici = await _firebaseAuth.signInWithEmailAndPassword(
-        email: email, password: sifre);
+        email: ePosta, password: sifre);
     return kullanici.uid;
   }
 
   //email ve şifre ile yeni bir kullanıcı oluşturmak için kullanılacak metot
   @override
   Future<String> mailAdresiveSifreyleKullaniciOlustur(
-      {String email, String sifre}) async {
+      {String ePosta, String sifre}) async {
     FirebaseUser kullanici = await _firebaseAuth.createUserWithEmailAndPassword(
-        email: email, password: sifre);
+        email: ePosta, password: sifre);
     return kullanici.uid;
   }
 }

@@ -1,122 +1,122 @@
 import 'dart:async';
-import 'package:flutter/material.dart';
 
 import '../classes/validators.dart';
 import '../servis/authentication_api.dart';
 
-class LoginBloc with Validators {
-  final AuthenticationApi authenticationApi;
-  String _email;
+class LoginBloc with Dogrulayicilar {
+  final YetkiApi authenticationApi;
+  String _eposta;
   String _sifre;
-  bool _emailValid;
-  bool _sifreValid;
+  bool _epostaDogru;
+  bool _sifreDogru;
 
-  final StreamController<String> _emailController =
+  final StreamController<String> _ePostaKontrolor =
       StreamController<String>.broadcast();
-  Sink<String> get emailChanged => _emailController.sink;
-  Stream<String> get email => _emailController.stream.transform(validateEmail);
+  Sink<String> get ePostaDegistiSinki => _ePostaKontrolor.sink;
+  Stream<String> get ePostaAkisi =>
+      _ePostaKontrolor.stream.transform(ePostaDogrula);
 
-  final StreamController<String> _sifreController =
+  final StreamController<String> _sifreKontrolor =
       StreamController<String>.broadcast();
-  Sink<String> get sifreChanged => _sifreController.sink;
-  Stream<String> get sifre => _sifreController.stream.transform(validateSifre);
+  Sink<String> get sifreDegistiSinki => _sifreKontrolor.sink;
+  Stream<String> get sifreAkisi =>
+      _sifreKontrolor.stream.transform(sifreDogrula);
 
-  final StreamController<bool> _enableLoginCreateButtonController =
+  final StreamController<bool> _loginHesapOlusturButonuAktiflemeKontrolor =
       StreamController<bool>.broadcast();
-  Sink<bool> get enableLoginCreateButtonChanged =>
-      _enableLoginCreateButtonController.sink;
-  Stream<bool> get enableLoginCreateButton =>
-      _enableLoginCreateButtonController.stream;
+  Sink<bool> get loginHesapOlusturButonuAktiflemeDegistiSinki =>
+      _loginHesapOlusturButonuAktiflemeKontrolor.sink;
+  Stream<bool> get loginHesapOlusturButonuAktiflemeAkisi =>
+      _loginHesapOlusturButonuAktiflemeKontrolor.stream;
 
-  final StreamController<String> _loginOrCreateButtonController =
+  final StreamController<String> _loginYadaHesapOlusturButonuKontrolor =
       StreamController<String>();
-  Sink<String> get loginOrCreateButtonChanged =>
-      _loginOrCreateButtonController.sink;
-  Stream<String> get loginOrCreateButton =>
-      _loginOrCreateButtonController.stream;
+  Sink<String> get loginYadaHesapOlusturButonuDegistiSinki =>
+      _loginYadaHesapOlusturButonuKontrolor.sink;
+  Stream<String> get loginYadaHesapOlusturButonuAkisi =>
+      _loginYadaHesapOlusturButonuKontrolor.stream;
 
-  final StreamController<String> _loginOrCreateController =
+  final StreamController<String> _loginYadaHesapOlusturKontrolor =
       StreamController<String>();
-  Sink<String> get loginOrCreateChanged => _loginOrCreateController.sink;
-  Stream<String> get loginOrCreate => _loginOrCreateController.stream;
+  Sink<String> get loginYadaHesapOlusturDegistiSinki =>
+      _loginYadaHesapOlusturKontrolor.sink;
+  Stream<String> get loginYadaHesapOlusturAkisi =>
+      _loginYadaHesapOlusturKontrolor.stream;
 
   LoginBloc({this.authenticationApi}) {
-    _mailveSifreDinleyicileriBaslat();
+    _ePostaveSifreDogrulamaDinleyicileriniBaslat();
   }
 
   void dispose() {
-    _sifreController.close();
-    _emailController.close();
-    _enableLoginCreateButtonController.close();
-    _loginOrCreateButtonController.close();
-    _loginOrCreateController.close();
+    _sifreKontrolor.close();
+    _ePostaKontrolor.close();
+    _loginHesapOlusturButonuAktiflemeKontrolor.close();
+    _loginYadaHesapOlusturButonuKontrolor.close();
+    _loginYadaHesapOlusturKontrolor.close();
   }
 
   //bu metot loginbloc oluştuğu gibi dinleyicileri başlatır ve her email ve şifre değiştiğinde login create buton durumunu değiştirir.
-  void _mailveSifreDinleyicileriBaslat() {
-    email.listen((email) {
-      _email = email;
-      _emailValid = true;
-      _updateEnableLoginCreateButtonStream();
+  void _ePostaveSifreDogrulamaDinleyicileriniBaslat() {
+    ePostaAkisi.listen((ePosta) {
+      _eposta = ePosta;
+      _epostaDogru = true;
+      _loginHesapOlusturButonAktiflemeAkisiniGuncelle();
     }).onError((hata) {
-      _email = '';
-      _emailValid = false;
-      _updateEnableLoginCreateButtonStream();
+      _eposta = '';
+      _epostaDogru = false;
+      _loginHesapOlusturButonAktiflemeAkisiniGuncelle();
     });
-    sifre.listen((sifre) {
+    sifreAkisi.listen((sifre) {
       _sifre = sifre;
-      _sifreValid = true;
-      _updateEnableLoginCreateButtonStream();
+      _sifreDogru = true;
+      _loginHesapOlusturButonAktiflemeAkisiniGuncelle();
     }).onError((hata) {
       _sifre = '';
-      _sifreValid = false;
-      _updateEnableLoginCreateButtonStream();
+      _sifreDogru = false;
+      _loginHesapOlusturButonAktiflemeAkisiniGuncelle();
     });
-    loginOrCreate.listen((action) {
-      action == 'Login' ? _girisYap() : _hesapOlustur();
+    loginYadaHesapOlusturAkisi.listen((aksiyon) {
+      aksiyon == 'Login' ? _girisYap() : _hesapOlustur();
     });
   }
 
-  void _updateEnableLoginCreateButtonStream() {
-    if (_emailValid == true && _sifreValid == true) {
-      enableLoginCreateButtonChanged.add(true);
+  void _loginHesapOlusturButonAktiflemeAkisiniGuncelle() {
+    if (_epostaDogru == true && _sifreDogru == true) {
+      loginHesapOlusturButonuAktiflemeDegistiSinki.add(true);
     } else {
-      enableLoginCreateButtonChanged.add(false);
+      loginHesapOlusturButonuAktiflemeDegistiSinki.add(false);
     }
   }
 
   Future<String> _girisYap() async {
-    String _result = '';
-    if (_emailValid && _sifreValid) {
+    String _sonuc = '';
+    if (_epostaDogru && _sifreDogru) {
       await authenticationApi
-          .mailAdresiveSifreyleGirisYap(email: _email, sifre: _sifre)
-          .then((user) {
-        _result = 'Success';
-      }).catchError((error) {
-        print('Login hatası: $error');
-        _result = error;
+          .mailAdresiveSifreyleGirisYap(ePosta: _eposta, sifre: _sifre)
+          .then((kullanici) {
+        _sonuc = 'Success';
+      }).catchError((hata) {
+        print('Login hatası: $hata');
+        _sonuc = hata;
       });
-      return _result;
+      return _sonuc;
     } else {
-      return 'email ve şifre doğru değil';
+      return 'ePosta ve şifre doğru değil';
     }
   }
 
   Future<String> _hesapOlustur() async {
     String _sonuc = '';
-    if (_emailValid && _sifreValid) {
+    if (_epostaDogru && _sifreDogru) {
       await authenticationApi
-          .mailAdresiveSifreyleKullaniciOlustur(email: _email, sifre: _sifre)
+          .mailAdresiveSifreyleKullaniciOlustur(ePosta: _eposta, sifre: _sifre)
           .then((kullanici) {
         print('Kullanıcı oluşturuldu: $kullanici');
         _sonuc = 'Kullanıcı Oluşturuldu: $kullanici';
         authenticationApi
-            .mailAdresiveSifreyleGirisYap(email: _email, sifre: _sifre)
+            .mailAdresiveSifreyleGirisYap(ePosta: _eposta, sifre: _sifre)
             .then((user) {})
             .catchError((hata) async {
-          AlertDialog(
-            content: hata,
-          );
           _sonuc = hata;
         });
       }).catchError((hata) async {
