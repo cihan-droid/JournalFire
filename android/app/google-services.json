@@ -1,33 +1,33 @@
 {
   "project_info": {
-    "project_number": "269582262126",
-    "project_id": "olacak-84466",
-    "storage_bucket": "olacak-84466.appspot.com"
+    "project_number": "56902324178",
+    "project_id": "gunlukuygulamam-65603",
+    "storage_bucket": "gunlukuygulamam-65603.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:269582262126:android:32d773121aaa3a8281ab7f",
+        "mobilesdk_app_id": "1:56902324178:android:9a4e327ef832fdefc8820b",
         "android_client_info": {
           "package_name": "com.example.JournalFire"
         }
       },
       "oauth_client": [
         {
-          "client_id": "269582262126-5inhh3t26n7npt6tj1kbjb5afo0rqqj1.apps.googleusercontent.com",
+          "client_id": "56902324178-mbb0v66irhsk3cp0c6itjf9tov9u4eh6.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBCpPrSwbZ6FN5VE8POXHCbu-ab499BcQE"
+          "current_key": "AIzaSyCcX-d9jcnRbkn5SiRTrJ0k4dN1wlSvEig"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "269582262126-5inhh3t26n7npt6tj1kbjb5afo0rqqj1.apps.googleusercontent.com",
+              "client_id": "56902324178-mbb0v66irhsk3cp0c6itjf9tov9u4eh6.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
