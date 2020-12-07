@@ -49,7 +49,7 @@ class MyApp extends StatelessWidget {
   MaterialApp _materialAppOlustur(Widget homePage) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Gunluk',
+      title: 'Gunluk1',
       theme: ThemeData(
         primarySwatch: Colors.lightGreen,
         canvasColor: Colors.lightGreen.shade50,
