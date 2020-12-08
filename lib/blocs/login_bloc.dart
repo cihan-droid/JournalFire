@@ -1,10 +1,10 @@
 import 'dart:async';
 
 import '../classes/validators.dart';
-import '../servis/authentication_api.dart';
+import '../servis/kimlik_dogrulama_api.dart';
 
 class LoginBloc with Dogrulayicilar {
-  final YetkiApi authenticationApi;
+  final KimlikDogrulamaApi kimlikDogrulamaApi;
   String _eposta;
   String _sifre;
   bool _epostaDogru;
@@ -43,7 +43,7 @@ class LoginBloc with Dogrulayicilar {
   Stream<String> get loginYadaHesapOlusturAkisi =>
       _loginYadaHesapOlusturKontrolor.stream;
 
-  LoginBloc({this.authenticationApi}) {
+  LoginBloc({this.kimlikDogrulamaApi}) {
     _ePostaveSifreDogrulamaDinleyicileriniBaslat();
   }
 
@@ -91,7 +91,7 @@ class LoginBloc with Dogrulayicilar {
   Future<String> _girisYap() async {
     String _sonuc = '';
     if (_epostaDogru && _sifreDogru) {
-      await authenticationApi
+      await kimlikDogrulamaApi
           .mailAdresiveSifreyleGirisYap(ePosta: _eposta, sifre: _sifre)
           .then((kullanici) {
         _sonuc = 'Success';
@@ -108,12 +108,12 @@ class LoginBloc with Dogrulayicilar {
   Future<String> _hesapOlustur() async {
     String _sonuc = '';
     if (_epostaDogru && _sifreDogru) {
-      await authenticationApi
+      await kimlikDogrulamaApi
           .mailAdresiveSifreyleKullaniciOlustur(ePosta: _eposta, sifre: _sifre)
           .then((kullanici) {
         print('Kullanıcı oluşturuldu: $kullanici');
         _sonuc = 'Kullanıcı Oluşturuldu: $kullanici';
-        authenticationApi
+        kimlikDogrulamaApi
             .mailAdresiveSifreyleGirisYap(ePosta: _eposta, sifre: _sifre)
             .then((user) {})
             .catchError((hata) async {

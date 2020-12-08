@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'authentication_api.dart';
+import 'kimlik_dogrulama_api.dart';
 
-class AuthenticationService implements YetkiApi {
+class KimlikDogrulamaServisi implements KimlikDogrulamaApi {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   //
   FirebaseAuth getFirebaseAuth() {

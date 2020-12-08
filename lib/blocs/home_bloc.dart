@@ -1,11 +1,11 @@
 import 'dart:async';
-import '../servis/authentication_api.dart';
+import '../servis/kimlik_dogrulama_api.dart';
 import '../servis/db_firestore_api.dart';
 import '../model/gunluk.dart';
 
 class HomeBloc {
   final DbApi dbApi;
-  final YetkiApi yetkiApi;
+  final KimlikDogrulamaApi yetkiApi;
 
   final StreamController<List<Gunluk>> _gunlukListesiKontrolor =
       StreamController<List<Gunluk>>.broadcast();

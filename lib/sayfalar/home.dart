@@ -1,5 +1,5 @@
-import 'package:JournalFire/blocs/yetki_bloc.dart';
-import 'package:JournalFire/blocs/yetki_bloc_saglayici.dart';
+import 'package:JournalFire/blocs/kimlik_dogrulama_bloc.dart';
+import 'package:JournalFire/blocs/kimlik_dogrulama_bloc_saglayici.dart';
 import 'package:JournalFire/blocs/gunluk_edit_bloc.dart';
 import 'package:JournalFire/blocs/gunluk_edit_bloc_saglayici.dart';
 import 'package:JournalFire/blocs/home_bloc.dart';
@@ -17,7 +17,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  YetkiBloc _authenticationBloc;
+  KimlikDogrulamaBloc _authenticationBloc;
   HomeBloc _homeBloc;
   String _uid;
   ModIkonlari _modIkon = ModIkonlari();
@@ -27,7 +27,8 @@ class _HomeState extends State<Home> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     //inherited widgetlara initstate metoduyla değil didchangedepencies metodu üzerinden erişilir.
-    _authenticationBloc = YetkiBlocSaglayici.of(context).yetkiBloc;
+    _authenticationBloc =
+        KimlikDogrulamaBlocSaglayici.of(context).kimlikDogrulamaBloc;
     _homeBloc = HomeBlocSaglayici.of(context).homeBloc;
     _uid = HomeBlocSaglayici.of(context).uid;
   }

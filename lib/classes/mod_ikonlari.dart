@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
-// Used for Data Entry to pick Mood
+//mod ikonları bize o günkü durum ile ilgili ikon seçebilmemizi sağlayacak
+//bu ikonların rengi ikonu ve rotasyonu duruma göre değişecek
+// örneğin çok memnunsa sarı renkte olacak ve sağa doğru ikon rotate olacak
 class ModIkonlari {
   final String baslik;
   final Color renk;
@@ -9,6 +11,7 @@ class ModIkonlari {
 
   const ModIkonlari({this.baslik, this.renk, this.rotasyon, this.ikon});
 
+// bu metot bize başlığına göre ikonu getirmemize yarayacak. alttaki metotlarda aynı şekilde string olarak örneğin üzgün dediğimizde bize üzgünün ikonunu rengini ve rotasyonunu getirecek
   IconData getModIkon(String mod) {
     return _modIkonList[_modIkonList.indexWhere((icon) => icon.baslik == mod)]
         .ikon;
@@ -29,6 +32,7 @@ class ModIkonlari {
   }
 }
 
+//bu liste ikonların başlığına göre rengi rotasyonu ve ikonunun belirlerndiği listedir. bu listede aynı zamanda mod ikonu ekleyeceğimiz zaman karşımıza çıkacak
 const List<ModIkonlari> _modIkonList = const <ModIkonlari>[
   const ModIkonlari(
       baslik: 'Çok Memnun',

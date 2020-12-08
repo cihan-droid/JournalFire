@@ -1,5 +1,5 @@
 import 'package:JournalFire/blocs/login_bloc.dart';
-import 'package:JournalFire/servis/authentication.dart';
+import 'package:JournalFire/servis/kimlik_dogrulama.dart';
 import 'package:flutter/material.dart';
 
 class Login extends StatefulWidget {
@@ -13,7 +13,7 @@ class _LoginState extends State<Login> {
   @override
   void initState() {
     super.initState();
-    _loginBloc = LoginBloc(authenticationApi: AuthenticationService());
+    _loginBloc = LoginBloc(kimlikDogrulamaApi: KimlikDogrulamaServisi());
   }
 
   @override

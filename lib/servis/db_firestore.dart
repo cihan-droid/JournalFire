@@ -2,13 +2,12 @@ import '../model/gunluk.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'db_firestore_api.dart';
 
+//bu sınıf cloud firestore üzerinde veri alışverişini sağlar
 class DbFirestoreServis implements DbApi {
   Firestore _firestore = Firestore.instance;
   String _gunlukKoleksiyonu = 'gunlukler';
 
-  DbFirestoreServis() {
-    // _firestore.settings(timestampsInSnapshotsEnabled: true);
-  }
+  DbFirestoreServis() {}
 
   //kullanıcya ait bütün günlük listesini alabilmek için kullandığımız metot
   @override
@@ -60,6 +59,7 @@ class DbFirestoreServis implements DbApi {
         .catchError((hata) => print('Silme sırasında bir hata oluştu: $hata'));
   }
 
+//veritabanındaki transaction mantığı ile aynıdır. işlem yarıda kesilirse rollback yapar
   @override
   void transactionIleGunlukGuncelle(Gunluk gunluk) {
     DocumentReference _documentReference =

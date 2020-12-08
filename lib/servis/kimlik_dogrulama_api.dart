@@ -1,4 +1,5 @@
-abstract class YetkiApi {
+// Bu sınıf kimlik doğrulama için bir soyut sınıf yaratacak bu sınıftan türeyen sınıflar bu metotların hepsini uygulamak zorundadır. bu yöntem bloc mimarisini kullanırken bloc yapısını platformdan bağımsız hale getirebilmek için gereklidir.
+abstract class KimlikDogrulamaApi {
   getFirebaseAuth();
   Future<String> anlikKullaniciId();
   Future<void> cikisYap();

@@ -1,10 +1,10 @@
-import 'package:JournalFire/blocs/yetki_bloc.dart';
-import 'package:JournalFire/blocs/yetki_bloc_saglayici.dart';
+import 'package:JournalFire/blocs/kimlik_dogrulama_bloc.dart';
+import 'package:JournalFire/blocs/kimlik_dogrulama_bloc_saglayici.dart';
 import 'package:JournalFire/blocs/home_bloc.dart';
 import 'package:JournalFire/blocs/home_bloc_saglayici.dart';
 import 'package:JournalFire/sayfalar/home.dart';
 import 'package:JournalFire/sayfalar/login.dart';
-import 'package:JournalFire/servis/authentication.dart';
+import 'package:JournalFire/servis/kimlik_dogrulama.dart';
 import 'package:JournalFire/servis/db_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -13,12 +13,12 @@ void main() => runApp(MyApp());
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final AuthenticationService _authenticationService =
-        AuthenticationService();
-    final YetkiBloc _authenticationBloc =
-        YetkiBloc(yetkiApi: _authenticationService);
-    return YetkiBlocSaglayici(
-      yetkiBloc: _authenticationBloc,
+    final KimlikDogrulamaServisi _authenticationService =
+        KimlikDogrulamaServisi();
+    final KimlikDogrulamaBloc _authenticationBloc =
+        KimlikDogrulamaBloc(kimlikDogrulamaApi: _authenticationService);
+    return KimlikDogrulamaBlocSaglayici(
+      kimlikDogrulamaBloc: _authenticationBloc,
       child: StreamBuilder(
         //programın başlangıcında ilk değer olarak null veriyoruz hiç bir kullanıcı daha bağlanmadı anlamında
         initialData: null,
@@ -49,7 +49,7 @@ class MyApp extends StatelessWidget {
   MaterialApp _materialAppOlustur(Widget homePage) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Gunluk1',
+      title: 'Gunluk',
       theme: ThemeData(
         primarySwatch: Colors.lightGreen,
         canvasColor: Colors.lightGreen.shade50,
