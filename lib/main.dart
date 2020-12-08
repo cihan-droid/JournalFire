@@ -1,83 +1,61 @@
+import 'package:JournalFire/blocs/kimlik_dogrulama_bloc.dart';
+import 'package:JournalFire/blocs/kimlik_dogrulama_bloc_saglayici.dart';
+import 'package:JournalFire/blocs/home_bloc.dart';
+import 'package:JournalFire/blocs/home_bloc_saglayici.dart';
+import 'package:JournalFire/sayfalar/home.dart';
+import 'package:JournalFire/sayfalar/login.dart';
+import 'package:JournalFire/servis/kimlik_dogrulama.dart';
+import 'package:JournalFire/servis/db_firestore.dart';
 import 'package:flutter/material.dart';
 
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-// This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    final KimlikDogrulamaServisi _authenticationService =
+        KimlikDogrulamaServisi();
+    final KimlikDogrulamaBloc _authenticationBloc =
+        KimlikDogrulamaBloc(kimlikDogrulamaApi: _authenticationService);
+    return KimlikDogrulamaBlocSaglayici(
+      kimlikDogrulamaBloc: _authenticationBloc,
+      child: StreamBuilder(
+        //programın başlangıcında ilk değer olarak null veriyoruz hiç bir kullanıcı daha bağlanmadı anlamında
+        initialData: null,
+        //authentication bloc sınıfında yazdığımız akış sağlayıcının adı kullanıcı idi. bu bize herhangi bir kullanıcının girip girmediğinin bilgisini sağlayacak
+        stream: _authenticationBloc.kullaniciAkisi,
+        //builder özelliği stream içerisine bakarak veri olup olmadığına göre ekranı yeniden çizer. eğer kullanıcı bilgisi akıştan geliyorsa home sayfasını gösterirken kullanıcı bilgisi yoksa login sayfasını gösterir.
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Container(
+              color: Colors.lightGreen,
+              child: CircularProgressIndicator(),
+            );
+          } else if (snapshot.hasData) {
+            return HomeBlocSaglayici(
+              homeBloc: HomeBloc(
+                  yetkiApi: _authenticationService, dbApi: DbFirestoreServis()),
+              uid: snapshot.data,
+              child: _materialAppOlustur(Home()),
+            );
+          } else {
+            return _materialAppOlustur(Login());
+          }
+        },
+      ),
+    );
+  }
+
+  MaterialApp _materialAppOlustur(Widget homePage) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Journal',
+      title: 'Gunluk',
       theme: ThemeData(
         primarySwatch: Colors.lightGreen,
         canvasColor: Colors.lightGreen.shade50,
         bottomAppBarColor: Colors.lightGreen,
       ),
-      home: Home(),
-    );
-  }
-}
-
-class Home extends StatefulWidget {
-  @override
-  _HomeState createState() => _HomeState();
-}
-
-class _HomeState extends State<Home> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Journal',
-            style: TextStyle(color: Colors.lightGreen.shade800)),
-        elevation: 0.0,
-        bottom: PreferredSize(
-            child: Container(), preferredSize: Size.fromHeight(32.0)),
-        flexibleSpace: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Colors.lightGreen, Colors.lightGreen.shade50],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-            ),
-          ),
-        ),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(
-              Icons.exit_to_app,
-              color: Colors.lightGreen.shade800,
-            ),
-            onPressed: () {
-              // TODO: Add signOut method
-            },
-          ),
-        ],
-      ),
-      body: Container(),
-      bottomNavigationBar: BottomAppBar(
-        elevation: 0.0,
-        child: Container(
-          height: 44.0,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Colors.lightGreen.shade50, Colors.lightGreen],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-            ),
-          ),
-        ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: FloatingActionButton(
-        tooltip: 'Add Journal Entry',
-        backgroundColor: Colors.lightGreen.shade300,
-        child: Icon(Icons.add),
-        onPressed: () async {
-          // TODO: Add _addOrEditJournal method
-        },
-      ),
+      home: homePage,
     );
   }
 }
