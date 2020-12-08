@@ -13,17 +13,17 @@ void main() => runApp(MyApp());
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final KimlikDogrulamaServisi _authenticationService =
+    final KimlikDogrulamaServisi _kimlikDogrulamaServis =
         KimlikDogrulamaServisi();
-    final KimlikDogrulamaBloc _authenticationBloc =
-        KimlikDogrulamaBloc(kimlikDogrulamaApi: _authenticationService);
+    final KimlikDogrulamaBloc _kimlikDogrulamaBloc =
+        KimlikDogrulamaBloc(kimlikDogrulamaApi: _kimlikDogrulamaServis);
     return KimlikDogrulamaBlocSaglayici(
-      kimlikDogrulamaBloc: _authenticationBloc,
+      kimlikDogrulamaBloc: _kimlikDogrulamaBloc,
       child: StreamBuilder(
         //programın başlangıcında ilk değer olarak null veriyoruz hiç bir kullanıcı daha bağlanmadı anlamında
         initialData: null,
         //authentication bloc sınıfında yazdığımız akış sağlayıcının adı kullanıcı idi. bu bize herhangi bir kullanıcının girip girmediğinin bilgisini sağlayacak
-        stream: _authenticationBloc.kullaniciAkisi,
+        stream: _kimlikDogrulamaBloc.kullaniciAkisi,
         //builder özelliği stream içerisine bakarak veri olup olmadığına göre ekranı yeniden çizer. eğer kullanıcı bilgisi akıştan geliyorsa home sayfasını gösterirken kullanıcı bilgisi yoksa login sayfasını gösterir.
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -34,7 +34,8 @@ class MyApp extends StatelessWidget {
           } else if (snapshot.hasData) {
             return HomeBlocSaglayici(
               homeBloc: HomeBloc(
-                  yetkiApi: _authenticationService, dbApi: DbFirestoreServis()),
+                  kimlikDogrulamaApi: _kimlikDogrulamaServis,
+                  dbApi: DbFirestoreServis()),
               uid: snapshot.data,
               child: _materialAppOlustur(Home()),
             );

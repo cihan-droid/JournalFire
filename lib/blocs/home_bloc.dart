@@ -5,7 +5,7 @@ import '../model/gunluk.dart';
 
 class HomeBloc {
   final DbApi dbApi;
-  final KimlikDogrulamaApi yetkiApi;
+  final KimlikDogrulamaApi kimlikDogrulamaApi;
 
   final StreamController<List<Gunluk>> _gunlukListesiKontrolor =
       StreamController<List<Gunluk>>.broadcast();
@@ -17,7 +17,7 @@ class HomeBloc {
       StreamController<Gunluk>.broadcast();
   Sink<Gunluk> get gunlukSilmeSinki => _gunlukSilmeKontrolor.sink;
 
-  HomeBloc({this.dbApi, this.yetkiApi}) {
+  HomeBloc({this.dbApi, this.kimlikDogrulamaApi}) {
     _dinleyecileriBaslat();
   }
 
@@ -28,7 +28,7 @@ class HomeBloc {
 
   void _dinleyecileriBaslat() {
     //firestoredan günlük kayıtlarını getirecek ama firestore da tutulduğu gibi document olarak değil List<Gunluk> olarak getirecek
-    yetkiApi.getFirebaseAuth().currentUser().then((kullanici) {
+    kimlikDogrulamaApi.getFirebaseAuth().currentUser().then((kullanici) {
       dbApi.getGunlukListesi(kullanici.uid).listen((gunlukDocs) {
         _gunlukListesiEkleSinki.add(gunlukDocs);
       });

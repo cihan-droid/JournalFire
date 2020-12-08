@@ -88,6 +88,8 @@ class LoginBloc with Dogrulayicilar {
     }
   }
 
+//login sayfasında oluşturacağımız sinke bir event ekleyecek
+//eklenen bu event eğer string tipinde login ise bu metota yönelecek değilse hesap oluştura yönelecek
   Future<String> _girisYap() async {
     String _sonuc = '';
     if (_epostaDogru && _sifreDogru) {
