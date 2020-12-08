@@ -24,6 +24,7 @@ class _GirisDuzenleState extends State<GirisDuzenle> {
     _notController.text = '';
   }
 
+//inherited widget tarafından başlatılan değişkenler için didchangedependencies metodu kullanılır.
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();

@@ -17,7 +17,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  KimlikDogrulamaBloc _authenticationBloc;
+  KimlikDogrulamaBloc _kimlikDogrulamaBloc;
   HomeBloc _homeBloc;
   String _uid;
   ModIkonlari _modIkon = ModIkonlari();
@@ -27,7 +27,7 @@ class _HomeState extends State<Home> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     //inherited widgetlara initstate metoduyla değil didchangedepencies metodu üzerinden erişilir.
-    _authenticationBloc =
+    _kimlikDogrulamaBloc =
         KimlikDogrulamaBlocSaglayici.of(context).kimlikDogrulamaBloc;
     _homeBloc = HomeBlocSaglayici.of(context).homeBloc;
     _uid = HomeBlocSaglayici.of(context).uid;
@@ -188,8 +188,8 @@ class _HomeState extends State<Home> {
               color: Colors.lightGreen.shade800,
             ),
             onPressed: () {
-              //authentication bloc nesnesini yaratırken iki farklı stream kontoller yaratmıştık bunlardan biri authentication kontroller diğeri de logout controller idi şu an butona basıldığında logoutcontroller ın sink tarafı havuza bir true göndererek bütün dinleyiciler tarafından kullanıcın çıkış yaptığı bilinecek
-              _authenticationBloc.kullaniciCikisSinki.add(true);
+              //kimlik doğrulama bloc nesnesini yaratırken iki farklı stream kontoller yaratmıştık bunlardan biri kimlik doğrulama kontroller diğeri de logout controller idi şu an butona basıldığında logoutcontroller ın sink tarafı havuza bir true göndererek bütün dinleyiciler tarafından kullanıcın çıkış yaptığı bilinecek
+              _kimlikDogrulamaBloc.kullaniciCikisSinki.add(true);
             },
           ),
         ],
